@@ -5,7 +5,7 @@
 ## 安装
 
 ```shell
-$ go get -u github.com/PaulXu-cn/go-mod-graph-chart
+$ go get -u github.com/PaulXu-cn/go-mod-graph-chart/gmchart
 ```
 
 ## 使用
@@ -17,6 +17,7 @@ $ go mod graph | gmchart
 
 执行 `go mod graph` 命令，输出的文本作为该程序的输入，该程序会起一个http服务，并打开 `url` 展示图表
 
+![show](./show.gif)
 ## 改动重建
 
 如果你改动了 `JS` 代码，记得重新构建前端项目，然后重新构建 `go` 项目

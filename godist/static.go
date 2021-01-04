@@ -29507,8 +29507,8 @@ var innerHeight = 0;
 const margin = { top: 5, right: 200, bottom: 5, left: 200};
 
 function tree() {
-    width = treeWidth * 100;
-    height = treeDepth * 100;
+    width = treeDepth * 400; 
+    height = treeWidth * 50;
 
     const svg = d3__WEBPACK_IMPORTED_MODULE_0__.select('#app').append('svg').attr('id', 'svg')
     .attr('width', width).attr('height', height);
@@ -29572,8 +29572,8 @@ function tree() {
         treeWidth = data.data.width;
         treeDepth = data.data.depth;
 
-        width = treeWidth * 100 + margin.left + margin.right;
-        height = treeDepth * 100 + margin.top + margin.bottom;
+        width = treeDepth * 400 + margin.left + margin.right;
+        height = treeWidth * 50 + margin.top + margin.bottom;
 
         innerWidth = width - margin.left - margin.right;
         innerHeight = height - margin.top - margin.bottom;

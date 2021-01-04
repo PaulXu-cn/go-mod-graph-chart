@@ -5,7 +5,7 @@ build chart by go mod graph output
 ## Install
 
 ```shell
-$ go get -u github.com/PaulXu-cn/go-mod-graph-chart
+$ go get -u github.com/PaulXu-cn/go-mod-graph-chart/gmchart
 ```
 
 ## Usage
@@ -16,6 +16,8 @@ $ go mod graph | gmchart
 ```
 
 The program will start a http server and open the url in default browser.
+
+![show](./show.gif)
 
 ## Change & Rebuild
 
