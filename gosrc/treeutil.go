@@ -6,23 +6,23 @@ import (
 )
 
 type RouteNode struct {
-	Id    uint32 `json:"id"`
-	Name  string `json:"name"`
-	Popularity uint32 `json:"popularity"`
+	Id    uint32   `json:"id"`
+	Name  string   `json:"name"`
+	Value uint32   `json:"value"`
 	Route []uint32 `json:"-"`
 }
 
 type Tree struct {
-	Id uint32 `json:"-"`
-	Name string	`json:"name"`
-	Popularity uint32 `json:"popularity"`
+	Id       uint32  `json:"-"`
+	Name     string  `json:"name"`
+	Value    uint32  `json:"value"`
 	Children []*Tree `json:"children"`
 }
 
 var routeNodes = map[string]RouteNode{}
 
-func BuildTree(graph string) *Tree {
-	var root = new(Tree)
+func BuildTree(graph string) (root *Tree, depth uint32, width uint32) {
+	root = new(Tree)
 	var roots = make(map[string]*Tree, 0)
 	var key uint32 = 0
 	for _, line := range strings.Split(graph, "\n") {
@@ -30,7 +30,7 @@ func BuildTree(graph string) *Tree {
 			continue
 		}
 		splitStr := strings.Split(line, " ")
-		if 2 > len(splitStr) {
+		if 2 > len(splitStr) 	{
 			panic(fmt.Sprintf("go mod graph output format error——%s", line))
 		}
 
@@ -40,15 +40,15 @@ func BuildTree(graph string) *Tree {
 			// 寻找父节点
 			tree.Name = splitStr[0]
 			tree.Id = key
-			tree.Popularity = 1
+			tree.Value = 1
 
 			if newRoot, ok := roots[splitStr[0]]; ok {
-				newRoot.Popularity ++
+				newRoot.Value++
 			} else {
 				newRoot = &Tree{
-					Id: key,
-					Name: splitStr[0],
-					Popularity: 1,
+					Id:    key,
+					Name:  splitStr[0],
+					Value: 1,
 				}
 				roots[splitStr[0]] = newRoot
 				InsertTreeRoute(newRoot, []uint32{})
@@ -57,7 +57,7 @@ func BuildTree(graph string) *Tree {
 				// 如果 root 为空
 				root.Id = tree.Id
 				root.Name = tree.Name
-				root.Popularity = tree.Popularity
+				root.Value = tree.Value
 				InsertTreeRoute(tree, []uint32{})
 				key ++
 			}
@@ -73,7 +73,7 @@ func BuildTree(graph string) *Tree {
 			// 新节点
 			tree2.Name = splitStr[1]
 			tree2.Id = key
-			tree2.Popularity = 1
+			tree2.Value = 1
 
 			AppendTreeAfter(root, splitStr[0], tree2)
 			key ++
@@ -83,7 +83,8 @@ func BuildTree(graph string) *Tree {
 			//panic("重复的依赖节点")
 		}
 	}
-	return root
+	depth, width = CalculateDepthHeight(root)
+	return
 }
 
 func AppendTreeAfter(parentTreeNode *Tree, parent string, new *Tree) {
@@ -99,7 +100,7 @@ func insertTree(parentTree *Tree, keys []uint32, new *Tree) (route []uint32) {
 			parentTree.Children = make([]*Tree, 0)
 		}
 		parentTree.Children = append(parentTree.Children, new)
-		parentTree.Popularity ++
+		parentTree.Value++
 		return []uint32{uint32(len(parentTree.Children)-1)}
 	}
 	theKey := keys[0]
@@ -113,7 +114,7 @@ func insertTree(parentTree *Tree, keys []uint32, new *Tree) (route []uint32) {
 				theChild.Children = make([]*Tree, 0)
 			}
 			theChild.Children = append(theChild.Children, new)
-			parentTree.Popularity ++
+			parentTree.Value++
 			return []uint32{theKey, uint32(len(theChild.Children)-1)}
 		} else {
 			// 进入下级
@@ -156,11 +157,58 @@ func InsertTreeRoute(newTree *Tree, keys []uint32) {
 		the.Route = keys
 	} else {
 		routeNodes[newTree.Name] = RouteNode {
-			Id: newTree.Id,
-			Name: newTree.Name,
+			Id:    newTree.Id,
+			Name:  newTree.Name,
 			Route: keys,
-			Popularity: newTree.Popularity,
+			Value: newTree.Value,
 		}
 	}
 	return
+}
+
+func CalculateDepthHeight(root *Tree) (depth uint32, width uint32) {
+	depth = calcDepth(root.Children)
+	var treeWidths = &[]uint32{1}
+	calcWidth(root.Children, treeWidths, 1)
+	width = (*treeWidths)[0]
+	for _, item := range *treeWidths {
+		if width < item {
+			width = item
+		}
+	}
+	return
+}
+
+func calcDepth(node []*Tree) (depth uint32) {
+	if nil != node && 0 < len(node) {
+		// 有
+		var maxDepth uint32 = 0
+		var theDepth uint32 = 0
+		for _, item := range node {
+			theDepth = calcDepth(item.Children)
+			if theDepth > maxDepth {
+				// 如果更深
+				maxDepth = theDepth
+			}
+		}
+		return maxDepth + 1
+	}
+	// 没有
+	return 1
+}
+
+func calcWidth(node []*Tree, treeWidths *[]uint32, level int) {
+	if nil != node && 0 < len(node) {
+		// 有
+		var theWidth uint32 = uint32(len(node))
+		if level < len(*treeWidths) {
+			var originWidth = (*treeWidths)[level]
+			(*treeWidths)[level] = originWidth + theWidth
+		} else {
+			*treeWidths = append(*treeWidths, theWidth)
+		}
+		for _, item := range node {
+			calcWidth(item.Children, treeWidths, level + 1)
+		}
+	}
 }

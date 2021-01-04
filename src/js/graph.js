@@ -1,8 +1,13 @@
 import * as d3 from 'd3';
 import CSS from '../css/styles.css';
 
+var width = 1000, height = 1000;
+var num = 1;
+
 export default function graph() {
-    let width = 1000, height = 1000;
+    width = num * 30;
+    height = num * 30;
+
     let colorScale, color, circles, lines, texts, arrowMarker, tickCount, simulation;
     let svg = d3.select('#app').append('svg').attr('width', width).attr('height', height);
 
@@ -101,6 +106,11 @@ export default function graph() {
     d3.json('/graph.json').then(data => {
         links = data.data.links;
         nodes = data.data.nodes;
+        num = data.data.num;
+
+        width = num * 30;
+        height = num * 30;    
+        d3.select('#app').select('svg').attr('width', width).attr('height', height);
 
         colorScale = d3.scaleDiverging(d3.interpolatePuOr).domain([0, (nodes.length - 1)]);
         color = d3.scaleDiverging(d3.interpolateRainbow).domain([0, nodes.length - 1])

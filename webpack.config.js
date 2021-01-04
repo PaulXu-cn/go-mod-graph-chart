@@ -51,6 +51,7 @@ const isDev = process.env.NODE_ENV === 'development'
 
 config = {
   mode: 'development',
+  devtool: false, // 编译成果 保留换行
   plugins: [
     new HtmlWebpackPlugin({
       title: 'go mod graph charting',

@@ -11,16 +11,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	dist "go-mod-graph-chart/godist"
-	src "go-mod-graph-chart/gosrc"
+	dist "github.com/PaulXu-cn/go-mod-graph-chart/godist"
+	src "github.com/PaulXu-cn/go-mod-graph-chart/gosrc"
 )
 
 var (
-	debug int
+	debug int = 0
+	keep int = 0
 )
 
 func init() {
 	flag.IntVar(&debug, "debug", 0, "is debug model")
+	flag.IntVar(&keep, "keep", 0, "start http server not exit")
 }
 
 func main() {
@@ -44,7 +46,7 @@ func main() {
 	}
 
 	// tree
-	tree := src.BuildTree(goModGraph)
+	tree, depth, width := src.BuildTree(goModGraph)
 
 	if 0 < debug {
 		// 如果是 debug 模式
@@ -77,16 +79,26 @@ func main() {
 			"data": struct {
 				Nodes []src.Node `json:"nodes""`
 				Links []src.Link `json:"links""`
+				Num uint32 `json:"num"`
 			}{
 				Nodes: nodeSortArr,
 				Links: links,
+				Num: uint32(len(nodeSortArr)),
 			},
 		})
 	})
 	r.GET("/tree.json", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "success",
-			"data": tree,
+			"data": struct {
+				Tree src.Tree `json:"tree"`
+				Depth uint32 `json:"depth"`
+				Width uint32 `json:"width"`
+			}{
+				Tree: *tree,
+				Depth: depth,
+				Width: width,
+			},
 		})
 	})
 
@@ -103,12 +115,14 @@ func main() {
 		return cmd.Start()
 	}()
 
-	go func() error {
-		fmt.Println("the go mod graph will top in 60s")
-		time.Sleep(60 * time.Second)
-		os.Exit(0)
-		return nil
-	}()
+	if 1 > keep {
+		go func() error {
+			fmt.Println("the go mod graph will top in 60s")
+			time.Sleep(60 * time.Second)
+			os.Exit(0)
+			return nil
+		}()
+	}
 
 	r.Run(host + ":" + port) // 监听并在 0.0.0.0:8080 上启动服务
 }

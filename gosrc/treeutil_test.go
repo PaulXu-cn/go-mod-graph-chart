@@ -192,7 +192,7 @@ google.golang.org/protobuf@v0.0.0-20200109180630-ec00e32a8dfd github.com/google/
 	}
 
 	for _, tt := range urlTests {
-		actual := BuildTree(tt.in)
+		actual, _, _ := BuildTree(tt.in)
 		if (nil != actual) != tt.expected {
 			t.Errorf("BuildTree(%s) = %v, expected %t", tt.in, actual, tt.expected)
 		}

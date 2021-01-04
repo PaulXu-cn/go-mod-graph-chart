@@ -1,14 +1,27 @@
 import * as d3 from 'd3';
 import CSS from '../css/styles.css';
 
+var treeWidth = 1;
+var treeDepth = 1;
+
+var width = 4000;
+var height = 2500;
+
+var innerWidth = 0
+var innerHeight = 0;
+
+const margin = { top: 5, right: 200, bottom: 5, left: 200};
+
 export default function tree() {
-    const width = 4000;
-    const height = 2500;
+    width = treeWidth * 100;
+    height = treeDepth * 100;
+
     const svg = d3.select('#app').append('svg').attr('id', 'svg')
     .attr('width', width).attr('height', height);
-    const margin = { top: 5, right: 150, bottom: 5, left: 50 };
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
+
+    innerWidth = width - margin.left - margin.right;
+    innerHeight = height - margin.top - margin.bottom;
+
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
     let root;
@@ -61,11 +74,26 @@ export default function tree() {
     }
 
     d3.json('/tree.json').then(data => {
-        let treeData = data.data;
+        let treeData = data.data.tree;
+        treeWidth = data.data.width;
+        treeDepth = data.data.depth;
+
+        width = treeWidth * 100 + margin.left + margin.right;
+        height = treeDepth * 100 + margin.top + margin.bottom;
+
+        innerWidth = width - margin.left - margin.right;
+        innerHeight = height - margin.top - margin.bottom;
+
+        d3.select('#app').select('svg').attr('width', width).attr('height', height);
+
         root = d3.hierarchy(treeData);
         // alternatively, we can set size of each node; 
         // root = d3.tree().nodeSize([30, width / (root.height + 1)])(root);
         root = d3.tree().size([innerHeight, innerWidth])(root);
         render(root);
+
+        setTimeout(function () {
+            window.scrollTo(0, height / 2)
+        }, 1000);
     });
 }
