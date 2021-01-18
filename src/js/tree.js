@@ -10,29 +10,23 @@ var height = 2500;
 var innerWidth = 0
 var innerHeight = 0;
 
+var root;
+var color;
+
 const margin = { top: 5, right: 200, bottom: 5, left: 200};
 
 export default function tree() {
-    width = treeDepth * 400; 
-    height = treeWidth * 50;
-
     const svg = d3.select('#app').append('svg').attr('id', 'svg')
     .attr('width', width).attr('height', height);
 
-    innerWidth = width - margin.left - margin.right;
-    innerHeight = height - margin.top - margin.bottom;
-
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
-    let root;
-    let color;
 
     const fill = d => {
         if (d.depth === 0)
             return color(d.data.name)
-        while (d.depth > 1)
-            d = d.parent;
-        return color(d.data.name);
+        else
+            return color(d.parent.data.name)
     }
 
     const render = function (data) {
@@ -48,29 +42,44 @@ export default function tree() {
             .attr("stroke-width", 1.5)
             .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x));
 
-        // alternatively, we can use the following code to do a single data-join; 
-        // then, use .append() to add circles and texts; 
-        /*const node = g.append("g")
-        .selectAll("g")
-        .data(root.descendants())
-        .join("g")
-        .attr("transform", d => `translate(${d.y},${d.x})`);*/
-
         g.selectAll('circle').data(root.descendants()).join('circle')
             // optionally, we can use stroke-linejoin to beautify the path connection; 
             //.attr("stroke-linejoin", "round")
-            .attr("stroke-width", 3)
+            .attr("stroke-width", 1)
             .attr("fill", fill)
             .attr('cx', d => d.y)
             .attr('cy', d => d.x)
-            .attr("r", 6);
+            .attr("r", function (d) {
+                if (d.children) {
+                    return 6 + Math.sqrt(d.children.length) * 3;
+                } else {
+                    return 7;
+                }
+            }).on('mouseover', function (d) {
+                d3.select(this)
+                .attr('stroke-width', 3)
+                .attr('stroke', 'black')
+            }).on('mouseout', function (d) {
+                d3.select(this).attr('opacity', 1)
+                .attr('stroke-width', 1)
+                .attr('stroke', fill(d))
+            });
 
         g.selectAll('text').data(root.descendants()).join('text')
             .attr("text-anchor", d => d.children ? "end" : "start")
             // note that if d is a child, d.children is undefined which is actually false! 
             .attr('x', d => (d.children ? -6 : 6) + d.y)
-            .attr('y', d => d.x + 5)
-            .text(d => d.data.name);
+            .attr('y', function (d) {return d.depth % 2 ? d.x - 3: d.x + 14})
+            .text(d => d.data.name)
+            .on('mouseover', function (d) {
+                d3.select(this)
+                .attr('stroke-width', '.4px')
+                .attr('stroke', 'white')
+            }).on('mouseout', function (d) {
+                d3.select(this)
+                .attr('stroke-width', 0)
+                .attr('stroke', 'black')
+            });
     }
 
     d3.json('/tree.json').then(data => {
@@ -78,11 +87,11 @@ export default function tree() {
         treeWidth = data.data.width;
         treeDepth = data.data.depth;
 
-        width = treeDepth * 400 + margin.left + margin.right;
-        height = treeWidth * 50 + margin.top + margin.bottom;
-
-        innerWidth = width - margin.left - margin.right;
-        innerHeight = height - margin.top - margin.bottom;
+        innerWidth = treeDepth * 400;
+        innerHeight = treeWidth * 60;
+    
+        width = innerWidth + margin.left + margin.right;
+        height = innerHeight + margin.top + margin.bottom;
 
         d3.select('#app').select('svg').attr('width', width).attr('height', height);
 
