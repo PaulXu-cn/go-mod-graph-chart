@@ -49,7 +49,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "", "",{"version":3,"sources":[],"names":[],"mappings":"","sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.tree-path {\n    fill: none;\n    stroke: black;\n    stroke-width: 1.5px;\n    opacity: 0.6;\n}\n\n.tree-circle {\n    stroke-width: 1;\n}\n\n.tree-circle.on {\n    stroke-width: 3;\n    stroke: black;\n}\n\n.tree-text {\n    opacity: 0.7;\n    stroke-width: 0.2px;\n    stroke: white;\n}\n\n.tree-text.on {\n    opacity: 1;\n    stroke-width: 0.8px;\n    stroke: black;\n}", "",{"version":3,"sources":["webpack://./src/css/styles.css"],"names":[],"mappings":";AACA;IACI,UAAU;IACV,aAAa;IACb,mBAAmB;IACnB,YAAY;AAChB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,eAAe;IACf,aAAa;AACjB;;AAEA;IACI,YAAY;IACZ,mBAAmB;IACnB,aAAa;AACjB;;AAEA;IACI,UAAU;IACV,mBAAmB;IACnB,aAAa;AACjB","sourcesContent":["\n.tree-path {\n    fill: none;\n    stroke: black;\n    stroke-width: 1.5px;\n    opacity: 0.6;\n}\n\n.tree-circle {\n    stroke-width: 1;\n}\n\n.tree-circle.on {\n    stroke-width: 3;\n    stroke: black;\n}\n\n.tree-text {\n    opacity: 0.7;\n    stroke-width: 0.2px;\n    stroke: white;\n}\n\n.tree-text.on {\n    opacity: 1;\n    stroke-width: 0.8px;\n    stroke: black;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -29531,16 +29531,15 @@ function tree() {
         g.selectAll("path")
             .data(root.links())
             .join("path")
-            .attr("fill", "none")
-            .attr("stroke", "black")
-            .attr("stroke-width", 1.5)
+            .classed('tree-path',true)
             .attr("d", d3__WEBPACK_IMPORTED_MODULE_0__.linkHorizontal().x(d => d.y).y(d => d.x));
 
         g.selectAll('circle').data(root.descendants()).join('circle')
             // optionally, we can use stroke-linejoin to beautify the path connection; 
             //.attr("stroke-linejoin", "round")
-            .attr("stroke-width", 1)
+            .classed('tree-circle', true)
             .attr("fill", fill)
+            .attr('id', (d, i) => ` + "`" + `circle-${i}` + "`" + `)
             .attr('cx', d => d.y)
             .attr('cy', d => d.x)
             .attr("r", function (d) {
@@ -29549,30 +29548,28 @@ function tree() {
                 } else {
                     return 7;
                 }
-            }).on('mouseover', function (d) {
-                d3__WEBPACK_IMPORTED_MODULE_0__.select(this)
-                .attr('stroke-width', 3)
-                .attr('stroke', 'black')
-            }).on('mouseout', function (d) {
-                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).attr('opacity', 1)
-                .attr('stroke-width', 1)
-                .attr('stroke', fill(d))
+            }).on('mouseover', function (d, i) {
+                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', true);
+                d3__WEBPACK_IMPORTED_MODULE_0__.select("#text-" + i).classed('on', true);
+            }).on('mouseout', function (d, i) {
+                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', false).attr('stroke', fill(d));
+                d3__WEBPACK_IMPORTED_MODULE_0__.select("#text-" + i).classed('on', false);
             });
 
         g.selectAll('text').data(root.descendants()).join('text')
+            .classed('tree-text', true)
             .attr("text-anchor", d => d.children ? "end" : "start")
+            .attr('id', (d, i) => ` + "`" + `text-${i}` + "`" + `)
             // note that if d is a child, d.children is undefined which is actually false! 
             .attr('x', d => (d.children ? -6 : 6) + d.y)
             .attr('y', function (d) {return d.depth % 2 ? d.x - 3: d.x + 14})
             .text(d => d.data.name)
-            .on('mouseover', function (d) {
-                d3__WEBPACK_IMPORTED_MODULE_0__.select(this)
-                .attr('stroke-width', '.4px')
-                .attr('stroke', 'white')
-            }).on('mouseout', function (d) {
-                d3__WEBPACK_IMPORTED_MODULE_0__.select(this)
-                .attr('stroke-width', 0)
-                .attr('stroke', 'black')
+            .on('mouseover', function (d, i) {
+                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', true);
+                d3__WEBPACK_IMPORTED_MODULE_0__.select("#circle-" + i).classed('on', true);
+            }).on('mouseout', function (d, i) {
+                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', false);
+                d3__WEBPACK_IMPORTED_MODULE_0__.select("#circle-" + i).classed('on', false).attr('stroke', fill(d));
             });
     }
 
@@ -29581,8 +29578,8 @@ function tree() {
         treeWidth = data.data.width;
         treeDepth = data.data.depth;
 
-        innerWidth = treeDepth * 400;
-        innerHeight = treeWidth * 60;
+        innerWidth = treeDepth * 450;
+        innerHeight = treeWidth * 70;
     
         width = innerWidth + margin.left + margin.right;
         height = innerHeight + margin.top + margin.bottom;

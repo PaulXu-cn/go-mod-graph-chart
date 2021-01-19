@@ -1,0 +1,28 @@
+
+.tree-path {
+    fill: none;
+    stroke: black;
+    stroke-width: 1.5px;
+    opacity: 0.6;
+}
+
+.tree-circle {
+    stroke-width: 1;
+}
+
+.tree-circle.on {
+    stroke-width: 3;
+    stroke: black;
+}
+
+.tree-text {
+    opacity: 0.7;
+    stroke-width: 0.2px;
+    stroke: white;
+}
+
+.tree-text.on {
+    opacity: 1;
+    stroke-width: 0.8px;
+    stroke: black;
+}

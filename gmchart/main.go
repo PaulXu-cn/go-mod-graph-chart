@@ -117,7 +117,7 @@ func main() {
 
 	if 1 > keep {
 		go func() error {
-			fmt.Println("the go mod graph will top in 60s")
+			fmt.Printf("the go mod graph will top in 60s\nvisit http://127.0.0.1:%s\n", port)
 			time.Sleep(60 * time.Second)
 			os.Exit(0)
 			return nil
