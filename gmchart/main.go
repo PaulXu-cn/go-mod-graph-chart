@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"runtime"
 	"time"
-
-	"github.com/gin-gonic/gin"
 
 	dist "github.com/PaulXu-cn/go-mod-graph-chart/godist"
 	src "github.com/PaulXu-cn/go-mod-graph-chart/gosrc"
@@ -23,6 +22,52 @@ var (
 func init() {
 	flag.IntVar(&debug, "debug", 0, "is debug model")
 	flag.IntVar(&keep, "keep", 0, "start http server not exit")
+}
+
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	var header = w.Header()
+	header.Add("Content-type", "text/html; charset=utf-8")
+	var indexStr = dist.GetFile("index.html")
+	w.Write([]byte(indexStr))
+	w.WriteHeader(http.StatusOK)
+}
+
+func MainJsHandler(w http.ResponseWriter, r *http.Request) {
+	var header = w.Header()
+	header.Add("Content-type", "text/javascript; charset=utf-8")
+	var indexStr = dist.GetFile("main.js")
+	w.Write([]byte(indexStr))
+	w.WriteHeader(http.StatusOK)
+}
+
+func PingHandler(w http.ResponseWriter, r *http.Request) {
+	var header = w.Header()
+	header.Add("content-type","text/json; charset=utf-8")
+	var jsonStr = "{\"message\": \"pong\"}"
+	w.Write([]byte(jsonStr))
+	w.WriteHeader(http.StatusOK)
+}
+
+type GraphData struct {
+	Nodes []src.Node `json:"nodes""`
+	Links []src.Link `json:"links""`
+	Num   uint32     `json:"num"`
+}
+
+type GraphJson struct {
+	Message string    `json:"message"`
+	Data    GraphData `json:"data"`
+}
+
+type TreeData struct {
+	Tree  src.Tree `json:"tree"`
+	Depth uint32   `json:"depth"`
+	Width uint32   `json:"width"`
+}
+
+type TreeJson struct {
+	Message string   `json:"message"`
+	Data    TreeData `json:"data"`
 }
 
 func main() {
@@ -59,51 +104,50 @@ func main() {
 		return
 	}
 
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.Header("Content-type", "text/html; charset=utf-8")
-		c.String(200, dist.GetFile("index.html"))
-	})
-	r.GET("/main.js", func(c *gin.Context) {
-		c.Header("Content-type", "text/javascript; charset=utf-8")
-		c.String(200, dist.GetFile("main.js"))
-	})
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.GET("/graph.json", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "success",
-			"data": struct {
-				Nodes []src.Node `json:"nodes""`
-				Links []src.Link `json:"links""`
-				Num uint32 `json:"num"`
-			}{
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", IndexHandler)
+	mux.HandleFunc("/main.js", MainJsHandler)
+	mux.HandleFunc("/ping", PingHandler)
+
+	mux.HandleFunc("/graph.json", func (w http.ResponseWriter, r *http.Request) {
+		var header = w.Header()
+		header.Add("Content-type", "text/javascript; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		var graph = GraphJson{
+			Message: "success",
+			Data: GraphData{
 				Nodes: nodeSortArr,
 				Links: links,
 				Num: uint32(len(nodeSortArr)),
 			},
-		})
+		}
+		var graphStr, _ = json.Marshal(graph)
+		w.Write(graphStr)
 	})
-	r.GET("/tree.json", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "success",
-			"data": struct {
-				Tree src.Tree `json:"tree"`
-				Depth uint32 `json:"depth"`
-				Width uint32 `json:"width"`
-			}{
+
+	mux.HandleFunc("/tree.json", func (w http.ResponseWriter, r *http.Request) {
+		var header = w.Header()
+		header.Add("Content-type", "text/javascript; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		var tree = TreeJson{
+			Message: "success",
+			Data: TreeData{
 				Tree: *tree,
 				Depth: depth,
 				Width: width,
 			},
-		})
+		}
+		var treeStr, _ = json.Marshal(tree)
+		w.Write(treeStr)
 	})
 
 	var host = "0.0.0.0"
 	var port = "60306"
+	// 监听并在 0.0.0.0:8080 上启动服务
+	server := &http.Server{
+		Addr:    host + ":" + port,
+		Handler: mux,
+	}
 
 	go func() error {
 		run, ok := commands[runtime.GOOS]
@@ -124,5 +168,8 @@ func main() {
 		}()
 	}
 
-	r.Run(host + ":" + port) // 监听并在 0.0.0.0:8080 上启动服务
+	err := server.ListenAndServe()
+	if err != nil {
+		fmt.Printf("gmchart server start err(%v)\n",  err)
+	}
 }
