@@ -1,6 +1,6 @@
 English | [中文](./README-CN.md)
 # go-mod-graph-chart
-build chart by go mod graph output
+A tool build chart by `go mod graph` output with zero dependencies
 
 ## Install
 

@@ -1,6 +1,6 @@
 [English](./README.md) | 中文
 # go-mod-graph-chart
-将 `go mod graph` 输出内容可视化 
+一个能将 `go mod graph` 输出内容可视化的无依赖小工具
 
 ## 安装
 
