@@ -69,12 +69,18 @@ export default function tree() {
             // note that if d is a child, d.children is undefined which is actually false! 
             .attr('x', d => (d.children ? -6 : 6) + d.y)
             .attr('y', function (d) {return d.depth % 2 ? d.x - 3: d.x + 14})
-            .text(d => d.data.name)
+            .text(function (d) {
+                // 默认最多只展示版本号，不展示hash
+                return d.data.name.replace(/(@[\w\.]*?)(-)(.*$)/, "$1")
+            })
             .on('mouseover', function (d, i) {
-                d3.select(this).classed('on', true);
+                // 鼠标放上去时，才展示后面的hash值
+                d3.select(this).classed('on', true).text(d => d.data.name);
                 d3.select("#circle-" + i).classed('on', true);
             }).on('mouseout', function (d, i) {
-                d3.select(this).classed('on', false);
+                d3.select(this).classed('on', false).text(function (d) {
+                    return d.data.name.replace(/(@[\w\.]*?)(-)(.*$)/, "$1")
+                });
                 d3.select("#circle-" + i).classed('on', false).attr('stroke', fill(d));
             });
     }
