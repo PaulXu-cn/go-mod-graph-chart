@@ -21,8 +21,9 @@ type Tree struct {
 
 var routeNodes = map[string]RouteNode{}
 
-func BuildTree(graph string) (root *Tree, depth uint32, width uint32) {
+func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDependNodes map[uint32]*Tree) {
 	root = new(Tree)
+	repeatDependNodes = map[uint32]*Tree{}
 	var roots = make(map[string]*Tree, 0)
 	var key uint32 = 0
 	for _, line := range strings.Split(graph, "\n") {
@@ -67,20 +68,44 @@ func BuildTree(graph string) (root *Tree, depth uint32, width uint32) {
 		}
 
 		var tree2 = new(Tree)
+		tree2.Name = splitStr[1]
+		tree2.Id = key
+		tree2.Value = 1
+
 		// 依赖节点
 		var theRouteNode2 = GetRouteNode(splitStr[1])
 		if nil == theRouteNode2  {
 			// 新节点
-			tree2.Name = splitStr[1]
-			tree2.Id = key
-			tree2.Value = 1
-
 			AppendTreeAfter(root, splitStr[0], tree2)
 			key ++
 		} else {
-			// 按理说不可能
-			//fmt.Println("重复的依赖节点", splitStr[1])
-			//panic("重复的依赖节点")
+			// 这是规则外的
+			fmt.Println("重复的依赖节点", splitStr[1])
+			if nil == repeatDependNodes || 1 > len(repeatDependNodes) {
+				repeatDependNodes = make(map[uint32]*Tree, 0)
+			}
+			var newRepeatDependNode = Tree{}
+			if value, ok := repeatDependNodes[theRouteNode1.Id]; !ok {
+				newRepeatDependNode = Tree{
+					Name: tree2.Name,
+					Value: tree2.Value,
+					Id: tree2.Id,
+					Children: []*Tree{
+						{
+							Name: theRouteNode1.Name,
+							Value: theRouteNode1.Value,
+							Id: theRouteNode1.Id,
+						},
+					},
+				}
+				repeatDependNodes[tree2.Id] = &newRepeatDependNode
+			} else {
+				value.Children = append(value.Children, &Tree{
+					Name: theRouteNode1.Name,
+					Value: theRouteNode1.Value,
+					Id: theRouteNode1.Id,
+				})
+			}
 		}
 	}
 	depth, width = CalculateDepthHeight(root)

@@ -70,6 +70,15 @@ type TreeJson struct {
 	Data    TreeData `json:"data"`
 }
 
+type AnTreeData struct {
+	Tree  map[uint32]*src.Tree `json:"tree"`
+}
+
+type AnTreeJson struct {
+	Message string   `json:"message"`
+	Data    AnTreeData `json:"data"`
+}
+
 func main() {
 	flag.Parse()
 	var goModGraph string = src.GetGoModGraph()
@@ -91,7 +100,7 @@ func main() {
 	}
 
 	// tree
-	tree, depth, width := src.BuildTree(goModGraph)
+	tree, depth, width, anotherTree := src.BuildTree(goModGraph)
 
 	if 0 < debug {
 		// 如果是 debug 模式
@@ -135,6 +144,20 @@ func main() {
 				Tree: *tree,
 				Depth: depth,
 				Width: width,
+			},
+		}
+		var treeStr, _ = json.Marshal(tree)
+		w.Write(treeStr)
+	})
+
+	mux.HandleFunc("/an-tree.json", func (w http.ResponseWriter, r *http.Request) {
+		var header = w.Header()
+		header.Add("Content-type", "text/javascript; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		var tree = AnTreeJson{
+			Message: "success",
+			Data: AnTreeData{
+				Tree: anotherTree,
 			},
 		}
 		var treeStr, _ = json.Marshal(tree)
