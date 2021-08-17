@@ -21,9 +21,9 @@ type Tree struct {
 
 var routeNodes = map[string]RouteNode{}
 
-func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDependNodes map[uint32]*Tree) {
+func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDependNodes map[string]*Tree) {
 	root = new(Tree)
-	repeatDependNodes = map[uint32]*Tree{}
+	repeatDependNodes = make(map[string]*Tree, 0)
 	var roots = make(map[string]*Tree, 0)
 	var key uint32 = 0
 	for _, line := range strings.Split(graph, "\n") {
@@ -81,16 +81,24 @@ func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDepe
 		} else {
 			// 这是规则外的
 			fmt.Println("重复的依赖节点", splitStr[1])
-			if nil == repeatDependNodes || 1 > len(repeatDependNodes) {
-				repeatDependNodes = make(map[uint32]*Tree, 0)
+			tree2.Id = theRouteNode2.Id	// 重复了就要用原来的
+			var theRouteKeys = append([]uint32{0}, theRouteNode2.Route[:len(theRouteNode2.Route) - 1]...)
+			var theParentNode = &Tree{}
+			if getNode := GetNodeByKeys([]*Tree{root}, theRouteKeys); nil != getNode {
+				theParentNode = getNode
 			}
 			var newRepeatDependNode = Tree{}
-			if value, ok := repeatDependNodes[theRouteNode1.Id]; !ok {
+			if value, ok := repeatDependNodes[theRouteNode2.Name]; !ok {
 				newRepeatDependNode = Tree{
 					Name: tree2.Name,
 					Value: tree2.Value,
 					Id: tree2.Id,
 					Children: []*Tree{
+						{		// 之前的那个节点也带上啊a
+							Name: theParentNode.Name,
+							Value: theParentNode.Value,
+							Id: theParentNode.Id,
+						},
 						{
 							Name: theRouteNode1.Name,
 							Value: theRouteNode1.Value,
@@ -98,13 +106,14 @@ func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDepe
 						},
 					},
 				}
-				repeatDependNodes[tree2.Id] = &newRepeatDependNode
+				repeatDependNodes[tree2.Name] = &newRepeatDependNode
 			} else {
 				value.Children = append(value.Children, &Tree{
 					Name: theRouteNode1.Name,
 					Value: theRouteNode1.Value,
 					Id: theRouteNode1.Id,
 				})
+				repeatDependNodes[tree2.Name] = value
 			}
 		}
 	}
@@ -235,5 +244,22 @@ func calcWidth(node []*Tree, treeWidths *[]uint32, level int) {
 		for _, item := range node {
 			calcWidth(item.Children, treeWidths, level + 1)
 		}
+	}
+}
+
+func GetNodeByKeys(tree []*Tree, keys []uint32) (re *Tree) {
+	if 1 > len(keys) {
+		return nil
+	}
+	if int(keys[0]) >= len(tree) {
+		return nil
+	}
+	node := tree[keys[0]]
+	if 1 < len(keys) {
+		return GetNodeByKeys(node.Children, keys[1:])
+	} else if 1 == len(keys) {
+		return node
+	} else {
+		return nil
 	}
 }

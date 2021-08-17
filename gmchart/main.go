@@ -71,7 +71,7 @@ type TreeJson struct {
 }
 
 type AnTreeData struct {
-	Tree  map[uint32]*src.Tree `json:"tree"`
+	Tree  map[string]*src.Tree `json:"tree"`
 }
 
 type AnTreeJson struct {
@@ -184,7 +184,7 @@ func main() {
 
 	if 1 > keep {
 		go func() error {
-			fmt.Printf("the go mod graph will top in 60s\nvisit http://127.0.0.1:%s\n", port)
+			fmt.Printf("the gmchart will stop in 60s\nvisit http://127.0.0.1:%s\n", port)
 			time.Sleep(60 * time.Second)
 			os.Exit(0)
 			return nil

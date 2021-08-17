@@ -26,3 +26,40 @@
     stroke-width: 0.8px;
     stroke: black;
 }
+
+.mask {
+    background-color: rgba(100, 100, 100, 0.6);
+    /* opacity:0.6; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+    visibility: visible;
+}
+
+.sub-board {
+    background-color: white;
+    position: fixed;
+    opacity: 1;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    width: 640px;
+    height: 480px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    z-index: 1001;
+    visibility: visible;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+div.hide {
+    display: none;
+}
