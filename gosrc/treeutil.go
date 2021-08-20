@@ -80,7 +80,7 @@ func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDepe
 			key ++
 		} else {
 			// 这是规则外的
-			fmt.Println("重复的依赖节点", splitStr[1])
+			//fmt.Println("重复的依赖节点", splitStr[1])
 			tree2.Id = theRouteNode2.Id	// 重复了就要用原来的
 			var theRouteKeys = append([]uint32{0}, theRouteNode2.Route[:len(theRouteNode2.Route) - 1]...)
 			var theParentNode = &Tree{}

@@ -29521,6 +29521,24 @@ function tree() {
         .attr('width', width).attr('height', height);
     const subSvg = d3__WEBPACK_IMPORTED_MODULE_0__.select('#sub-board').append('svg').attr('id', 'sub-svg')
         .attr('width', subWidth).attr('height', subHeight);
+    
+    let markerBoxWidth = 10;
+    let markerBoxHeight = 10;
+    let refX = 10;
+    let refY = 4;
+        svg.append('defs')
+        .append('marker')
+        .attr('id', 'arrow')
+        .attr('viewBox', [0, 0, markerBoxWidth, markerBoxHeight])
+        .attr('refX', refX)
+        .attr('refY', refY)
+        .attr('markerWidth', markerBoxWidth)
+        .attr('markerHeight', markerBoxHeight)
+        .attr('orient', 'auto-start-reverse')
+        .append('path')
+        .attr('d', d3__WEBPACK_IMPORTED_MODULE_0__.line()([[0, 0], [8, 4], [0, 8], [0, 7], [9, 4], [0, 1], [0, 0]]))
+        .attr('stroke', 'black');
+    
 
     const g = svg.append('g')
         .attr('transform', ` + "`" + `translate(${margin.left}, ${margin.top})` + "`" + `);
@@ -29599,18 +29617,24 @@ function tree() {
         subRender(subRoot);
     }
 
-    const render = function (data) {
+    const render = function (data, anData) {
         color = d3__WEBPACK_IMPORTED_MODULE_0__.scaleOrdinal()
-            .domain(root.descendants().filter(d => d.depth <= 1).map(d => d.data.name))
+            .domain(data.descendants().filter(d => d.depth <= 1).map(d => d.data.name))
             .range(d3__WEBPACK_IMPORTED_MODULE_0__.schemeCategory10);
 
         g.selectAll("path")
-            .data(root.links())
+            .data(data.links())
             .join("path")
             .classed('tree-path', true)
-            .attr("d", d3__WEBPACK_IMPORTED_MODULE_0__.linkHorizontal().x(d => d.y).y(d => d.x));
+            .attr("d", d3__WEBPACK_IMPORTED_MODULE_0__.linkHorizontal().x(d => d.y).y(d => d.x))
+            .attr("marker-end", function (d, i) {
+                let check = anData[d.target.data.name];
+                if (undefined != check) {
+                    return "url(#arrow)"
+                }
+            });
 
-        g.selectAll('circle').data(root.descendants()).join('circle')
+        g.selectAll('circle').data(data.descendants()).join('circle')
             // optionally, we can use stroke-linejoin to beautify the path connection; 
             //.attr("stroke-linejoin", "round")
             .classed('tree-circle', true)
@@ -29632,7 +29656,7 @@ function tree() {
                 d3__WEBPACK_IMPORTED_MODULE_0__.select("#text-" + i).classed('on', false);
             }).on('click', renderSubTree);
 
-        g.selectAll('text').data(root.descendants()).join('text')
+        g.selectAll('text').data(data.descendants()).join('text')
             .classed('tree-text', true)
             .attr("text-anchor", d => d.children ? "end" : "start")
             .attr('id', (d, i) => ` + "`" + `text-${i}` + "`" + `)
@@ -29655,33 +29679,34 @@ function tree() {
             }).on('click', renderSubTree);
     }
 
-    d3__WEBPACK_IMPORTED_MODULE_0__.json('/tree.json').then(data => {
-        let treeData = data.data.tree;
-        treeWidth = data.data.width;
-        treeDepth = data.data.depth;
-
-        innerWidth = treeDepth * 450;
-        innerHeight = treeWidth * 70;
-
-        width = innerWidth + margin.left + margin.right;
-        height = innerHeight + margin.top + margin.bottom;
-
-        d3__WEBPACK_IMPORTED_MODULE_0__.select('#app').select('svg').attr('width', width).attr('height', height);
-
-        root = d3__WEBPACK_IMPORTED_MODULE_0__.hierarchy(treeData);
-        // alternatively, we can set size of each node; 
-        // root = d3.tree().nodeSize([30, width / (root.height + 1)])(root);
-        root = d3__WEBPACK_IMPORTED_MODULE_0__.tree().size([innerHeight, innerWidth])(root);
-        render(root);
-
-        setTimeout(function () {
-            window.scrollTo(0, height / 2)
-        }, 1000);
-    });
-
     d3__WEBPACK_IMPORTED_MODULE_0__.json('/an-tree.json').then(data => {
         anTree = data.data.tree;
+
+        d3__WEBPACK_IMPORTED_MODULE_0__.json('/tree.json').then(data => {
+            let treeData = data.data.tree;
+            treeWidth = data.data.width;
+            treeDepth = data.data.depth;
+
+            innerWidth = treeDepth * 450;
+            innerHeight = treeWidth * 70;
+
+            width = innerWidth + margin.left + margin.right;
+            height = innerHeight + margin.top + margin.bottom;
+
+            d3__WEBPACK_IMPORTED_MODULE_0__.select('#app').select('svg').attr('width', width).attr('height', height);
+
+            root = d3__WEBPACK_IMPORTED_MODULE_0__.hierarchy(treeData);
+            // alternatively, we can set size of each node; 
+            // root = d3.tree().nodeSize([30, width / (root.height + 1)])(root);
+            root = d3__WEBPACK_IMPORTED_MODULE_0__.tree().size([innerHeight, innerWidth])(root);
+            render(root, anTree);
+
+            setTimeout(function () {
+                window.scrollTo(0, height / 2)
+            }, 1000);
+        });
     });
+
 }
 
 
