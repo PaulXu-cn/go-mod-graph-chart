@@ -62,6 +62,8 @@ func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDepe
 				InsertTreeRoute(tree, []uint32{})
 				key ++
 			}
+			theRouteNode1val := routeNodes[tree.Name]
+			theRouteNode1 = &theRouteNode1val
 		} else {
 			// 重复正常
 			//fmt.Println("重复的依赖节点")
@@ -82,7 +84,7 @@ func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDepe
 			// 这是规则外的
 			//fmt.Println("重复的依赖节点", splitStr[1])
 			tree2.Id = theRouteNode2.Id	// 重复了就要用原来的
-			var theRouteKeys = append([]uint32{0}, theRouteNode2.Route[:len(theRouteNode2.Route) - 1]...)
+			var theRouteKeys = append([]uint32{0}, theRouteNode2.Route...)
 			var theParentNode = &Tree{}
 			if getNode := GetNodeByKeys([]*Tree{root}, theRouteKeys); nil != getNode {
 				theParentNode = getNode
