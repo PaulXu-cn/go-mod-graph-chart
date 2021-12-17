@@ -92,7 +92,7 @@ func GetGoModGraph() string {
 		}
 	}()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(1500 * time.Millisecond)
 	if 1 > len(goModGraph) {
 		cmd := exec.Command("go mod graph")
 		if out, err := cmd.CombinedOutput(); nil != err {
