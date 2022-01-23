@@ -92,8 +92,9 @@ func GetGoModGraph() string {
 		}
 	}()
 
-	time.Sleep(1500 * time.Millisecond)
+	time.Sleep(2000 * time.Millisecond)
 	if 1 > len(goModGraph) {
+		fmt.Printf("no output pass in by pipe！\n")
 		cmd := exec.Command("go mod graph")
 		if out, err := cmd.CombinedOutput(); nil != err {
 			panic(fmt.Sprintf("go mod graph cmd run failed: %+v", err))
