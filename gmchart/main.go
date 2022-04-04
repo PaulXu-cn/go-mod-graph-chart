@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"os/exec"
-	"runtime"
 	"time"
 
 	dist "github.com/PaulXu-cn/go-mod-graph-chart/godist"
@@ -82,11 +80,6 @@ type AnTreeJson struct {
 func main() {
 	flag.Parse()
 	var goModGraph string = src.GetGoModGraph()
-	var commands = map[string]string{
-		"windows": "start",
-		"darwin":  "open",
-		"linux":   "xdg-open",
-	}
 
 	// nodes and links
 	nodes, links := src.GraphToNodeLinks(goModGraph)
@@ -173,13 +166,8 @@ func main() {
 	}
 
 	go func() error {
-		run, ok := commands[runtime.GOOS]
-		if !ok {
-			return fmt.Errorf("don't know how to open things on %s platform", runtime.GOOS)
-		}
 		// open it by default browser
-		cmd := exec.Command(run, "http://127.0.0.1:"+port)
-		return cmd.Start()
+		return src.OpenBrowser("http://127.0.0.1:" + port)
 	}()
 
 	if 1 > keep {
