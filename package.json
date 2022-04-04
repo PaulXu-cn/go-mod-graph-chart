@@ -17,7 +17,8 @@
   "author": "Paul Xu",
   "license": "MIT",
   "dependencies": {
-    "d3": "^5.16.0"
+    "d3": "^5.16.0",
+    "npm": "^8.6.0"
   },
   "devDependencies": {
     "@webpack-cli/init": "^1.0.3",

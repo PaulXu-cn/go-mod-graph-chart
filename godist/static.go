@@ -29333,9 +29333,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// graph();
-
-(0,_js_tree_js__WEBPACK_IMPORTED_MODULE_1__.default)();
+var hostPath = window.location.href;
+var paths = hostPath.split("#");
+// 这判断下，什么模式
+if (0 < paths.length && "graph" == (paths[paths.length - 1]).toLowerCase()) {
+    (0,_js_graph_js__WEBPACK_IMPORTED_MODULE_0__.default)();
+} else {
+    (0,_js_tree_js__WEBPACK_IMPORTED_MODULE_1__.default)();
+}
 
 
 /***/ }),
