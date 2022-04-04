@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	dist "github.com/PaulXu-cn/go-mod-graph-chart/godist"
@@ -172,15 +173,17 @@ func main() {
 		Handler: mux,
 	}
 	addr := li.Addr().String()
+	var addrs = strings.Split(addr, ":")
+	var printAddr = "http://" + host + ":" + addrs[len(addrs) - 1]
 
 	go func() error {
 		// open it by default browser
-		return src.OpenBrowser("http://" + addr)
+		return src.OpenBrowser(printAddr)
 	}()
 
 	if 1 > keep {
 		go func() error {
-			fmt.Printf("the go mod graph will top in 60s\nvisit %s\n", addr)
+			fmt.Printf("the go mod graph will top in 60s\nvisit it by %s\n", printAddr)
 			time.Sleep(60 * time.Second)
 			os.Exit(0)
 			return nil
