@@ -21,8 +21,9 @@ type Tree struct {
 
 var routeNodes = map[string]RouteNode{}
 
-func BuildTree(graph string) (root *Tree, depth uint32, width uint32) {
+func BuildTree(graph string) (root *Tree, depth uint32, width uint32, repeatDependNodes map[string]*Tree) {
 	root = new(Tree)
+	repeatDependNodes = make(map[string]*Tree, 0)
 	var roots = make(map[string]*Tree, 0)
 	var key uint32 = 0
 	for _, line := range strings.Split(graph, "\n") {
@@ -61,26 +62,61 @@ func BuildTree(graph string) (root *Tree, depth uint32, width uint32) {
 				InsertTreeRoute(tree, []uint32{})
 				key ++
 			}
+			theRouteNode1val := routeNodes[tree.Name]
+			theRouteNode1 = &theRouteNode1val
 		} else {
 			// 重复正常
 			//fmt.Println("重复的依赖节点")
 		}
 
 		var tree2 = new(Tree)
+		tree2.Name = splitStr[1]
+		tree2.Id = key
+		tree2.Value = 1
+
 		// 依赖节点
 		var theRouteNode2 = GetRouteNode(splitStr[1])
 		if nil == theRouteNode2  {
 			// 新节点
-			tree2.Name = splitStr[1]
-			tree2.Id = key
-			tree2.Value = 1
-
 			AppendTreeAfter(root, splitStr[0], tree2)
 			key ++
 		} else {
-			// 按理说不可能
+			// 这是规则外的
 			//fmt.Println("重复的依赖节点", splitStr[1])
-			//panic("重复的依赖节点")
+			tree2.Id = theRouteNode2.Id	// 重复了就要用原来的
+			var theRouteKeys = append([]uint32{0}, theRouteNode2.Route...)
+			var theParentNode = &Tree{}
+			if getNode := GetNodeByKeys([]*Tree{root}, theRouteKeys); nil != getNode {
+				theParentNode = getNode
+			}
+			var newRepeatDependNode = Tree{}
+			if value, ok := repeatDependNodes[theRouteNode2.Name]; !ok {
+				newRepeatDependNode = Tree{
+					Name: tree2.Name,
+					Value: tree2.Value,
+					Id: tree2.Id,
+					Children: []*Tree{
+						{		// 之前的那个节点也带上啊a
+							Name: theParentNode.Name,
+							Value: theParentNode.Value,
+							Id: theParentNode.Id,
+						},
+						{
+							Name: theRouteNode1.Name,
+							Value: theRouteNode1.Value,
+							Id: theRouteNode1.Id,
+						},
+					},
+				}
+				repeatDependNodes[tree2.Name] = &newRepeatDependNode
+			} else {
+				value.Children = append(value.Children, &Tree{
+					Name: theRouteNode1.Name,
+					Value: theRouteNode1.Value,
+					Id: theRouteNode1.Id,
+				})
+				repeatDependNodes[tree2.Name] = value
+			}
 		}
 	}
 	depth, width = CalculateDepthHeight(root)
@@ -210,5 +246,22 @@ func calcWidth(node []*Tree, treeWidths *[]uint32, level int) {
 		for _, item := range node {
 			calcWidth(item.Children, treeWidths, level + 1)
 		}
+	}
+}
+
+func GetNodeByKeys(tree []*Tree, keys []uint32) (re *Tree) {
+	if 1 > len(keys) {
+		return nil
+	}
+	if int(keys[0]) >= len(tree) {
+		return nil
+	}
+	node := tree[keys[0]]
+	if 1 < len(keys) {
+		return GetNodeByKeys(node.Children, keys[1:])
+	} else if 1 == len(keys) {
+		return node
+	} else {
+		return nil
 	}
 }

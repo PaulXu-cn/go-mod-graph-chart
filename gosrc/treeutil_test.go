@@ -1,6 +1,9 @@
 package gosrc
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+)
 
 func TestBuildTree(t *testing.T) {
 	var urlTests = []struct {
@@ -192,9 +195,13 @@ google.golang.org/protobuf@v0.0.0-20200109180630-ec00e32a8dfd github.com/google/
 	}
 
 	for _, tt := range urlTests {
-		actual, _, _ := BuildTree(tt.in)
+		actual, _, _, actual2 := BuildTree(tt.in)
 		if (nil != actual) != tt.expected {
-			t.Errorf("BuildTree(%s) = %v, expected %t", tt.in, actual, tt.expected)
+			t.Errorf("BuildTree(%s) = %v, %v, expected %t", tt.in, actual, actual2, tt.expected)
+		} else {
+			v1, _ :=json.Marshal(actual)
+			v2, _ :=json.Marshal(actual2)
+			t.Logf("tree: %s\n an-tree: %s\n", v1, v2)
 		}
 	}
 }

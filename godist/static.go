@@ -22,6 +22,9 @@ var IndexHtml = `<!DOCTYPE html>
 </head>
 <body >
 	<div id="app"></div>
+	<div id="mask" class="mask hide">
+		<div id="sub-board" class="sub-board"></div>
+	</div>
 <script src="main.js"></script></body>
 </html>
 `
@@ -49,7 +52,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.tree-path {\n    fill: none;\n    stroke: black;\n    stroke-width: 1.5px;\n    opacity: 0.6;\n}\n\n.tree-circle {\n    stroke-width: 1;\n}\n\n.tree-circle.on {\n    stroke-width: 3;\n    stroke: black;\n}\n\n.tree-text {\n    opacity: 0.7;\n    stroke-width: 0.2px;\n    stroke: white;\n}\n\n.tree-text.on {\n    opacity: 1;\n    stroke-width: 0.8px;\n    stroke: black;\n}", "",{"version":3,"sources":["webpack://./src/css/styles.css"],"names":[],"mappings":";AACA;IACI,UAAU;IACV,aAAa;IACb,mBAAmB;IACnB,YAAY;AAChB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,eAAe;IACf,aAAa;AACjB;;AAEA;IACI,YAAY;IACZ,mBAAmB;IACnB,aAAa;AACjB;;AAEA;IACI,UAAU;IACV,mBAAmB;IACnB,aAAa;AACjB","sourcesContent":["\n.tree-path {\n    fill: none;\n    stroke: black;\n    stroke-width: 1.5px;\n    opacity: 0.6;\n}\n\n.tree-circle {\n    stroke-width: 1;\n}\n\n.tree-circle.on {\n    stroke-width: 3;\n    stroke: black;\n}\n\n.tree-text {\n    opacity: 0.7;\n    stroke-width: 0.2px;\n    stroke: white;\n}\n\n.tree-text.on {\n    opacity: 1;\n    stroke-width: 0.8px;\n    stroke: black;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.tree-path {\n    fill: none;\n    stroke: black;\n    stroke-width: 1.5px;\n    opacity: 0.6;\n}\n\n.tree-circle {\n    stroke-width: 1;\n}\n\n.tree-circle.on {\n    stroke-width: 3;\n    stroke: black;\n}\n\n.tree-text {\n    opacity: 0.7;\n    stroke-width: 0.2px;\n    stroke: white;\n}\n\n.tree-text.on {\n    opacity: 1;\n    stroke-width: 0.8px;\n    stroke: black;\n}\n\n.mask {\n    background-color: rgba(100, 100, 100, 0.6);\n    /* opacity:0.6; */\n    position: fixed;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    z-index: 1000;\n    transition: all 0.3s ease-in-out;\n    visibility: visible;\n}\n\n.sub-board {\n    background-color: white;\n    position: fixed;\n    opacity: 1;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n    right: 0px;\n    width: 640px;\n    height: 480px;\n    margin-left:auto;\n    margin-right:auto;\n    margin-top: auto;\n    margin-bottom: auto;\n    z-index: 1001;\n    visibility: visible;\n    overflow-y: auto;\n    overflow-x: hidden;\n}\n\ndiv.hide {\n    display: none;\n}", "",{"version":3,"sources":["webpack://./src/css/styles.css"],"names":[],"mappings":";AACA;IACI,UAAU;IACV,aAAa;IACb,mBAAmB;IACnB,YAAY;AAChB;;AAEA;IACI,eAAe;AACnB;;AAEA;IACI,eAAe;IACf,aAAa;AACjB;;AAEA;IACI,YAAY;IACZ,mBAAmB;IACnB,aAAa;AACjB;;AAEA;IACI,UAAU;IACV,mBAAmB;IACnB,aAAa;AACjB;;AAEA;IACI,0CAA0C;IAC1C,iBAAiB;IACjB,eAAe;IACf,MAAM;IACN,OAAO;IACP,QAAQ;IACR,SAAS;IACT,aAAa;IACb,gCAAgC;IAChC,mBAAmB;AACvB;;AAEA;IACI,uBAAuB;IACvB,eAAe;IACf,UAAU;IACV,QAAQ;IACR,WAAW;IACX,SAAS;IACT,UAAU;IACV,YAAY;IACZ,aAAa;IACb,gBAAgB;IAChB,iBAAiB;IACjB,gBAAgB;IAChB,mBAAmB;IACnB,aAAa;IACb,mBAAmB;IACnB,gBAAgB;IAChB,kBAAkB;AACtB;;AAEA;IACI,aAAa;AACjB","sourcesContent":["\n.tree-path {\n    fill: none;\n    stroke: black;\n    stroke-width: 1.5px;\n    opacity: 0.6;\n}\n\n.tree-circle {\n    stroke-width: 1;\n}\n\n.tree-circle.on {\n    stroke-width: 3;\n    stroke: black;\n}\n\n.tree-text {\n    opacity: 0.7;\n    stroke-width: 0.2px;\n    stroke: white;\n}\n\n.tree-text.on {\n    opacity: 1;\n    stroke-width: 0.8px;\n    stroke: black;\n}\n\n.mask {\n    background-color: rgba(100, 100, 100, 0.6);\n    /* opacity:0.6; */\n    position: fixed;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    z-index: 1000;\n    transition: all 0.3s ease-in-out;\n    visibility: visible;\n}\n\n.sub-board {\n    background-color: white;\n    position: fixed;\n    opacity: 1;\n    top: 0px;\n    bottom: 0px;\n    left: 0px;\n    right: 0px;\n    width: 640px;\n    height: 480px;\n    margin-left:auto;\n    margin-right:auto;\n    margin-top: auto;\n    margin-bottom: auto;\n    z-index: 1001;\n    visibility: visible;\n    overflow-y: auto;\n    overflow-x: hidden;\n}\n\ndiv.hide {\n    display: none;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -29504,14 +29507,38 @@ var height = 2500;
 var innerWidth = 0
 var innerHeight = 0;
 
+var subWidth = 640;
+var subHeight = 480;
+
 var root;
 var color;
+var anTree;
 
-const margin = { top: 5, right: 200, bottom: 5, left: 200};
+const margin = { top: 5, right: 200, bottom: 5, left: 200 };
 
 function tree() {
     const svg = d3__WEBPACK_IMPORTED_MODULE_0__.select('#app').append('svg').attr('id', 'svg')
-    .attr('width', width).attr('height', height);
+        .attr('width', width).attr('height', height);
+    const subSvg = d3__WEBPACK_IMPORTED_MODULE_0__.select('#sub-board').append('svg').attr('id', 'sub-svg')
+        .attr('width', subWidth).attr('height', subHeight);
+    
+    let markerBoxWidth = 10;
+    let markerBoxHeight = 10;
+    let refX = 10;
+    let refY = 4;
+        svg.append('defs')
+        .append('marker')
+        .attr('id', 'arrow')
+        .attr('viewBox', [0, 0, markerBoxWidth, markerBoxHeight])
+        .attr('refX', refX)
+        .attr('refY', refY)
+        .attr('markerWidth', markerBoxWidth)
+        .attr('markerHeight', markerBoxHeight)
+        .attr('orient', 'auto-start-reverse')
+        .append('path')
+        .attr('d', d3__WEBPACK_IMPORTED_MODULE_0__.line()([[0, 0], [8, 4], [0, 8], [0, 7], [9, 4], [0, 1], [0, 0]]))
+        .attr('stroke', 'black');
+    
 
     const g = svg.append('g')
         .attr('transform', ` + "`" + `translate(${margin.left}, ${margin.top})` + "`" + `);
@@ -29523,18 +29550,91 @@ function tree() {
             return color(d.parent.data.name)
     }
 
-    const render = function (data) {
+    document.getElementById('mask').addEventListener('click', function (ev) {
+        if ('mask' == ev.target.getAttribute('id')) {
+            // ev.target.setAttribute("class", "mask hide");
+            document.getElementById('mask').setAttribute("class", "mask hide");
+        }
+    });
+
+    const subRender = function (data) {
+        let anotation = 500;
         color = d3__WEBPACK_IMPORTED_MODULE_0__.scaleOrdinal()
-            .domain(root.descendants().filter(d => d.depth <= 1).map(d => d.data.name))
+            .domain(data.descendants().filter(d => d.depth <= 1).map(d => d.data.name))
+            .range(d3__WEBPACK_IMPORTED_MODULE_0__.schemeCategory10);
+
+        subSvg.selectAll("path")
+            .data(data.links())
+            .join("path")
+            .classed('tree-path', true)
+            .attr("d", d3__WEBPACK_IMPORTED_MODULE_0__.linkHorizontal().x(d => anotation - d.y).y(d => d.x));
+
+        subSvg.selectAll('circle').data(data.descendants()).join('circle')
+            // optionally, we can use stroke-linejoin to beautify the path connection; 
+            //.attr("stroke-linejoin", "round")
+            .classed('tree-circle', true)
+            .attr("fill", fill)
+            .attr('id', (d, i) => ` + "`" + `circle-${i}` + "`" + `)
+            .attr('cx', d => anotation - d.y)
+            .attr('cy', d => d.x)
+            .attr("r", function (d) {
+                if (d.children) {
+                    return 6 + Math.sqrt(d.children.length) * 3;
+                } else {
+                    return 7;
+                }
+            });
+
+        subSvg.selectAll('text').data(data.descendants()).join('text')
+            .classed('tree-text', true)
+            .attr("text-anchor", d => d.children ? "end" : "start")
+            .attr('id', (d, i) => ` + "`" + `text-${i}` + "`" + `)
+            // note that if d is a child, d.children is undefined which is actually false! 
+            .attr('x', d => (d.children ? -6 : 6) + (anotation - d.y))
+            .attr('y', function (d) { return d.depth % 2 ? d.x - 3 : d.x + 14 })
+            .text(function (d) {
+                // 默认最多只展示版本号，不展示hash
+                return d.data.name.replace(/(@[\w\.]*?)(-)(.*$)/, "$1")
+            });
+    }
+
+    const renderSubTree = function (d, i) {
+        let theName = d.data.name;
+        let subTree = undefined;
+        if (anTree[theName] !== undefined) {
+            subTree = anTree[theName]
+        } else {
+            return
+        }
+
+        document.getElementById('mask').setAttribute("class", "mask");
+
+        let theSubHeight = subTree.children.length * 150;
+        d3__WEBPACK_IMPORTED_MODULE_0__.select('#sub-board').select('#sub-svg').attr('width', subWidth).attr('height', theSubHeight);
+
+        let subRoot = d3__WEBPACK_IMPORTED_MODULE_0__.hierarchy(subTree);
+        subRoot = d3__WEBPACK_IMPORTED_MODULE_0__.tree().size([theSubHeight, subWidth - 200])(subRoot);
+        subRender(subRoot);
+    }
+
+    const render = function (data, anData) {
+        color = d3__WEBPACK_IMPORTED_MODULE_0__.scaleOrdinal()
+            .domain(data.descendants().filter(d => d.depth <= 1).map(d => d.data.name))
             .range(d3__WEBPACK_IMPORTED_MODULE_0__.schemeCategory10);
 
         g.selectAll("path")
-            .data(root.links())
+            .data(data.links())
             .join("path")
-            .classed('tree-path',true)
-            .attr("d", d3__WEBPACK_IMPORTED_MODULE_0__.linkHorizontal().x(d => d.y).y(d => d.x));
+            .classed('tree-path', true)
+            .attr("d", d3__WEBPACK_IMPORTED_MODULE_0__.linkHorizontal().x(d => d.y).y(d => d.x))
+            .attr("marker-end", function (d, i) {
+                let check = anData[d.target.data.name];
+                if (undefined != check) {
+                    return "url(#arrow)"
+                }
+            });
 
-        g.selectAll('circle').data(root.descendants()).join('circle')
+        g.selectAll('circle').data(data.descendants()).join('circle')
             // optionally, we can use stroke-linejoin to beautify the path connection; 
             //.attr("stroke-linejoin", "round")
             .classed('tree-circle', true)
@@ -29554,48 +29654,59 @@ function tree() {
             }).on('mouseout', function (d, i) {
                 d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', false).attr('stroke', fill(d));
                 d3__WEBPACK_IMPORTED_MODULE_0__.select("#text-" + i).classed('on', false);
-            });
+            }).on('click', renderSubTree);
 
-        g.selectAll('text').data(root.descendants()).join('text')
+        g.selectAll('text').data(data.descendants()).join('text')
             .classed('tree-text', true)
             .attr("text-anchor", d => d.children ? "end" : "start")
             .attr('id', (d, i) => ` + "`" + `text-${i}` + "`" + `)
             // note that if d is a child, d.children is undefined which is actually false! 
             .attr('x', d => (d.children ? -6 : 6) + d.y)
-            .attr('y', function (d) {return d.depth % 2 ? d.x - 3: d.x + 14})
-            .text(d => d.data.name)
+            .attr('y', function (d) { return d.depth % 2 ? d.x - 3 : d.x + 14 })
+            .text(function (d) {
+                // 默认最多只展示版本号，不展示hash
+                return d.data.name.replace(/(@[\w\.]*?)(-)(.*$)/, "$1")
+            })
             .on('mouseover', function (d, i) {
-                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', true);
+                // 鼠标放上去时，才展示后面的hash值
+                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', true).text(d => d.data.name);
                 d3__WEBPACK_IMPORTED_MODULE_0__.select("#circle-" + i).classed('on', true);
             }).on('mouseout', function (d, i) {
-                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', false);
+                d3__WEBPACK_IMPORTED_MODULE_0__.select(this).classed('on', false).text(function (d) {
+                    return d.data.name.replace(/(@[\w\.]*?)(-)(.*$)/, "$1")
+                });
                 d3__WEBPACK_IMPORTED_MODULE_0__.select("#circle-" + i).classed('on', false).attr('stroke', fill(d));
-            });
+            }).on('click', renderSubTree);
     }
 
-    d3__WEBPACK_IMPORTED_MODULE_0__.json('/tree.json').then(data => {
-        let treeData = data.data.tree;
-        treeWidth = data.data.width;
-        treeDepth = data.data.depth;
+    d3__WEBPACK_IMPORTED_MODULE_0__.json('/an-tree.json').then(data => {
+        anTree = data.data.tree;
 
-        innerWidth = treeDepth * 450;
-        innerHeight = treeWidth * 70;
-    
-        width = innerWidth + margin.left + margin.right;
-        height = innerHeight + margin.top + margin.bottom;
+        d3__WEBPACK_IMPORTED_MODULE_0__.json('/tree.json').then(data => {
+            let treeData = data.data.tree;
+            treeWidth = data.data.width;
+            treeDepth = data.data.depth;
 
-        d3__WEBPACK_IMPORTED_MODULE_0__.select('#app').select('svg').attr('width', width).attr('height', height);
+            innerWidth = treeDepth * 450;
+            innerHeight = treeWidth * 70;
 
-        root = d3__WEBPACK_IMPORTED_MODULE_0__.hierarchy(treeData);
-        // alternatively, we can set size of each node; 
-        // root = d3.tree().nodeSize([30, width / (root.height + 1)])(root);
-        root = d3__WEBPACK_IMPORTED_MODULE_0__.tree().size([innerHeight, innerWidth])(root);
-        render(root);
+            width = innerWidth + margin.left + margin.right;
+            height = innerHeight + margin.top + margin.bottom;
 
-        setTimeout(function () {
-            window.scrollTo(0, height / 2)
-        }, 1000);
+            d3__WEBPACK_IMPORTED_MODULE_0__.select('#app').select('svg').attr('width', width).attr('height', height);
+
+            root = d3__WEBPACK_IMPORTED_MODULE_0__.hierarchy(treeData);
+            // alternatively, we can set size of each node; 
+            // root = d3.tree().nodeSize([30, width / (root.height + 1)])(root);
+            root = d3__WEBPACK_IMPORTED_MODULE_0__.tree().size([innerHeight, innerWidth])(root);
+            render(root, anTree);
+
+            setTimeout(function () {
+                window.scrollTo(0, height / 2)
+            }, 1000);
+        });
     });
+
 }
 
 
