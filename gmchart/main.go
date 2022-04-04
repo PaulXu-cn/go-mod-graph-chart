@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"time"
 
 	dist "github.com/PaulXu-cn/go-mod-graph-chart/godist"
@@ -16,12 +18,14 @@ import (
 
 var (
 	debug int = 0
-	keep int = 0
+	keep  int = 0
+	port  int = 0
 )
 
 func init() {
 	flag.IntVar(&debug, "debug", 0, "is debug model")
 	flag.IntVar(&keep, "keep", 0, "start http server not exit")
+	flag.IntVar(&debug, "port", 0, "server port")
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +46,7 @@ func MainJsHandler(w http.ResponseWriter, r *http.Request) {
 
 func PingHandler(w http.ResponseWriter, r *http.Request) {
 	var header = w.Header()
-	header.Add("content-type","text/json; charset=utf-8")
+	header.Add("content-type", "text/json; charset=utf-8")
 	var jsonStr = "{\"message\": \"pong\"}"
 	w.Write([]byte(jsonStr))
 	w.WriteHeader(http.StatusOK)
@@ -82,10 +86,10 @@ type AnTreeJson struct {
 func main() {
 	flag.Parse()
 	var goModGraph string = src.GetGoModGraph()
-	var commands = map[string]string{
-		"windows": "start",
-		"darwin":  "open",
-		"linux":   "xdg-open",
+	var commands = map[string][]string{
+		"windows": {"cmd", "/c start "},
+		"darwin":  {"open", ""},
+		"linux":   {"xdg-open", ""},
 	}
 
 	// nodes and links
@@ -118,7 +122,7 @@ func main() {
 	mux.HandleFunc("/main.js", MainJsHandler)
 	mux.HandleFunc("/ping", PingHandler)
 
-	mux.HandleFunc("/graph.json", func (w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/graph.json", func(w http.ResponseWriter, r *http.Request) {
 		var header = w.Header()
 		header.Add("Content-type", "text/javascript; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
@@ -127,21 +131,21 @@ func main() {
 			Data: GraphData{
 				Nodes: nodeSortArr,
 				Links: links,
-				Num: uint32(len(nodeSortArr)),
+				Num:   uint32(len(nodeSortArr)),
 			},
 		}
 		var graphStr, _ = json.Marshal(graph)
 		w.Write(graphStr)
 	})
 
-	mux.HandleFunc("/tree.json", func (w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/tree.json", func(w http.ResponseWriter, r *http.Request) {
 		var header = w.Header()
 		header.Add("Content-type", "text/javascript; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		var tree = TreeJson{
 			Message: "success",
 			Data: TreeData{
-				Tree: *tree,
+				Tree:  *tree,
 				Depth: depth,
 				Width: width,
 			},
@@ -149,6 +153,12 @@ func main() {
 		var treeStr, _ = json.Marshal(tree)
 		w.Write(treeStr)
 	})
+
+
+	li, err := net.Listen("tcp", net.JoinHostPort("127.0.0.1", strconv.Itoa(port)))
+	if nil != err {
+		fmt.Printf("gmchart server listen err(%v)\n", err)
+	}
 
 	mux.HandleFunc("/an-tree.json", func (w http.ResponseWriter, r *http.Request) {
 		var header = w.Header()
@@ -167,10 +177,11 @@ func main() {
 	var host = "0.0.0.0"
 	var port = "60306"
 	// 监听并在 0.0.0.0:8080 上启动服务
+
 	server := &http.Server{
-		Addr:    host + ":" + port,
 		Handler: mux,
 	}
+	addr := li.Addr().String()
 
 	go func() error {
 		run, ok := commands[runtime.GOOS]
@@ -178,21 +189,21 @@ func main() {
 			return fmt.Errorf("don't know how to open things on %s platform", runtime.GOOS)
 		}
 		// open it by default browser
-		cmd := exec.Command(run, "http://127.0.0.1:"+port)
+		cmd := exec.Command(run[0], run[1]+"http://"+addr)
 		return cmd.Start()
 	}()
 
 	if 1 > keep {
 		go func() error {
-			fmt.Printf("the gmchart will stop in 60s\nvisit http://127.0.0.1:%s\n", port)
+			fmt.Printf("the go mod graph will top in 60s\nvisit %s\n", addr)
 			time.Sleep(60 * time.Second)
 			os.Exit(0)
 			return nil
 		}()
 	}
 
-	err := server.ListenAndServe()
+	err = server.Serve(li)
 	if err != nil {
-		fmt.Printf("gmchart server start err(%v)\n",  err)
+		fmt.Printf("gmchart server start err(%v)\n", err)
 	}
 }
