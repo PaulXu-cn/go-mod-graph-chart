@@ -16,15 +16,17 @@ import (
 )
 
 var (
-	debug int = 0
-	keep  int = 0
-	port  int = 0
+	debug int    = 0
+	keep  int    = 0
+	port  int    = 0
+	mode  string = "tree"
 )
 
 func init() {
 	flag.IntVar(&debug, "debug", 0, "is debug model")
 	flag.IntVar(&keep, "keep", 0, "start http server not exit")
 	flag.IntVar(&port, "port", 0, "server port")
+	flag.StringVar(&mode, "mode", "tree", "work mode")
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -175,6 +177,9 @@ func main() {
 	addr := li.Addr().String()
 	var addrs = strings.Split(addr, ":")
 	var printAddr = "http://" + host + ":" + addrs[len(addrs) - 1]
+	if strings.ToLower(mode) == "graph" {
+		printAddr += "/#graph"
+	}
 
 	go func() error {
 		// open it by default browser
