@@ -124,5 +124,9 @@ export default function graph() {
             .force('link', d3.forceLink(links).strength(strengthFunc).distance(distanceFunc))
             .alphaTarget(0.3)
             .on('tick', ticked);
+
+        setTimeout(function () {
+            window.scrollTo(width / 2, height / 2)
+        }, 1000);
     })
 }

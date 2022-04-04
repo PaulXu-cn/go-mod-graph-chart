@@ -29483,6 +29483,10 @@ function graph() {
             .force('link', d3__WEBPACK_IMPORTED_MODULE_0__.forceLink(links).strength(strengthFunc).distance(distanceFunc))
             .alphaTarget(0.3)
             .on('tick', ticked);
+
+        setTimeout(function () {
+            window.scrollTo(width / 2, height / 2)
+        }, 1000);
     })
 }
 
