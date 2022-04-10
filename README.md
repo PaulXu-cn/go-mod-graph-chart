@@ -8,6 +8,12 @@ A tool build chart by `go mod graph` output with zero dependencies
 $ go get -u github.com/PaulXu-cn/go-mod-graph-chart/gmchart
 ```
 
+Go v1.16 or higher
+
+```shell
+$ go install github.com/PaulXu-cn/go-mod-graph-chart/gmchart@latest
+```
+
 ## Usage
 
 ```shell

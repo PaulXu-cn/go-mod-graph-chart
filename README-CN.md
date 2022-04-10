@@ -8,6 +8,12 @@
 $ go get -u github.com/PaulXu-cn/go-mod-graph-chart/gmchart
 ```
 
+Go v1.16 或者更高版本使用如下命令安装
+
+```shell
+$ go install github.com/PaulXu-cn/go-mod-graph-chart/gmchart@latest
+```
+
 ## 使用
 
 ```shell

@@ -23,10 +23,10 @@ var (
 )
 
 func init() {
-	flag.IntVar(&debug, "debug", 0, "is debug model")
-	flag.IntVar(&keep, "keep", 0, "start http server not exit")
-	flag.IntVar(&port, "port", 0, "server port")
-	flag.StringVar(&mode, "mode", "tree", "work mode")
+	flag.IntVar(&debug, "debug", 0, "whether debug model")
+	flag.IntVar(&keep, "keep", 0, "set no zero http server never exit")
+	flag.IntVar(&port, "port", 0, "set http server port or random port number")
+	flag.StringVar(&mode, "mode", "tree", "work mode, [tree/graph]")
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,8 +54,8 @@ func PingHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 type GraphData struct {
-	Nodes []src.Node `json:"nodes""`
-	Links []src.Link `json:"links""`
+	Nodes []src.Node `json:"nodes"`
+	Links []src.Link `json:"links"`
 	Num   uint32     `json:"num"`
 }
 
@@ -86,6 +86,7 @@ type AnTreeJson struct {
 
 func main() {
 	flag.Parse()
+	fmt.Println("go mod graph version v0.5.3")
 	var goModGraph string = src.GetGoModGraph()
 
 	// nodes and links
@@ -176,7 +177,7 @@ func main() {
 	}
 	addr := li.Addr().String()
 	var addrs = strings.Split(addr, ":")
-	var printAddr = "http://" + host + ":" + addrs[len(addrs) - 1]
+	var printAddr = "http://127.0.0.1:" + addrs[len(addrs)-1] // 这里127.0.0.1 写死，兼容win
 	if strings.ToLower(mode) == "graph" {
 		printAddr += "/#graph"
 	}
