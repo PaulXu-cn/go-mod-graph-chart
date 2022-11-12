@@ -1,4 +1,7 @@
 English | [中文](./README-CN.md)
+
+[![go-recipes](https://raw.githubusercontent.com/nikolaydubina/go-recipes/main/badge.svg?raw=true)](https://github.com/nikolaydubina/go-recipes)
+
 # go-mod-graph-chart
 A tool build chart by `go mod graph` output with zero dependencies
 
