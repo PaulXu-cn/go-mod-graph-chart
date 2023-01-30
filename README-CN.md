@@ -1,4 +1,7 @@
 [English](./README.md) | 中文
+
+[![go-recipes](https://raw.githubusercontent.com/nikolaydubina/go-recipes/main/badge.svg?raw=true)](https://github.com/nikolaydubina/go-recipes)
+
 # go-mod-graph-chart
 一个能将 `go mod graph` 输出内容可视化的无依赖小工具
 
